@@ -1,6 +1,6 @@
 # Mental Attention States Classification Using EEG Data
 
-> **Course Project — Pattern Recognition and Machine Learning (PRML)**  
+> **Course Project - Pattern Recognition and Machine Learning (PRML)**  
 > University of Science · Faculty of Mathematics and Computer Science
 
 ---
@@ -42,13 +42,13 @@ Understanding these states in real time has direct applications in driver monito
 - **Participants:** 5 subjects, each controlling a simulated train along a featureless route for 35–55 minutes per session.
 - **Experiments:** 7 sessions per participant; the first 2 were for habituation, the last 5 were used for data collection.
 - **Files:** 24 MATLAB (`.mat`) files in total (one participant completed 4 out of 5 sessions).
-- **EEG Channels:** 14 electrodes — `AF3, F7, F3, FC5, T7, P7, O1, O2, P8, T8, FC6, F4, F8, AF4`
+- **EEG Channels:** 14 electrodes - `AF3, F7, F3, FC5, T7, P7, O1, O2, P8, T8, FC6, F4, F8, AF4`
 - **Sampling Rate:** 128 Hz
 
 **State Segmentation (per session):**
-- Minutes 0–10 → Focused
-- Minutes 10–20 → Unfocused
-- Minutes 20–30 → Drowsy *(truncated to 10 min to balance classes)*
+- Minutes 0-10 → Focused
+- Minutes 10-20 → Unfocused
+- Minutes 20-30 → Drowsy *(truncated to 10 min to balance classes)*
 
 Only the first 30 minutes of each recording are used, yielding a balanced three-class distribution.
 
@@ -60,15 +60,15 @@ Only the first 30 minutes of each recording are used, yielding a balanced three-
 
 Raw EEG signals go through a two-stage cleaning pipeline before any analysis:
 
-**1. Bandpass Filtering (0.5–45 Hz)**  
+**1. Bandpass Filtering (0.5-45 Hz)**  
 A 4th-order Butterworth bandpass filter is applied to each channel. This range covers all clinically relevant brainwave bands while removing:
 - Baseline drift (< 0.5 Hz)
 - High-frequency muscle artifacts and electrical noise (> 45 Hz)
 
 **2. Independent Component Analysis (ICA)**  
 `FastICA` is used to decompose the multichannel EEG into statistically independent components. Artifact components are identified using two criteria:
-- **Kurtosis** — components with abnormally high kurtosis (spiky, non-Gaussian behavior) are flagged.
-- **Power** — components whose power exceeds the 95th percentile are flagged.
+- **Kurtosis** - components with abnormally high kurtosis (spiky, non-Gaussian behavior) are flagged.
+- **Power** - components whose power exceeds the 95th percentile are flagged.
 
 Identified artifact components are zeroed out before reconstructing the cleaned signal. This process is parallelised across all 24 recordings using `joblib`.
 
@@ -78,13 +78,13 @@ Identified artifact components are zeroed out before reconstructing the cleaned 
 
 Several visualizations were produced to build intuition about the data:
 
-- **Raw vs. filtered EEG traces** — side-by-side channel plots illustrating the effect of the bandpass filter.
-- **ICA component plots** — independent components colored by artifact status (pink background = potential artifact).
-- **FFT + Welch dual-axis spectral plots** — frequency-domain representation of each channel with annotated brainwave bands (Delta, Theta, Alpha, Beta).
-- **Per-state spectral comparison** — frequency analysis of channels `F3` and `F7` in each mental state, revealing:
-  - **Focused:** dominant Beta activity (13–30 Hz) — active concentration.
-  - **Unfocused:** dominant Alpha/Theta activity (4–13 Hz) — relaxed, inattentive.
-  - **Drowsy:** dominant Theta/Delta activity (0.5–8 Hz) — transition toward sleep.
+- **Raw vs. filtered EEG traces** - side-by-side channel plots illustrating the effect of the bandpass filter.
+- **ICA component plots** - independent components colored by artifact status (pink background = potential artifact).
+- **FFT + Welch dual-axis spectral plots** - frequency-domain representation of each channel with annotated brainwave bands (Delta, Theta, Alpha, Beta).
+- **Per-state spectral comparison** - frequency analysis of channels `F3` and `F7` in each mental state, revealing:
+  - **Focused:** dominant Beta activity (13–30 Hz) - active concentration.
+  - **Unfocused:** dominant Alpha/Theta activity (4–13 Hz) - relaxed, inattentive.
+  - **Drowsy:** dominant Theta/Delta activity (0.5–8 Hz) - transition toward sleep.
 
 ---
 
@@ -102,10 +102,10 @@ For each window and each of the 14 channels, **10 features** are computed:
 
 | Feature | Description |
 |---------|-------------|
-| **Delta power** | Band power 1–4 Hz |
-| **Theta power** | Band power 4–8 Hz |
-| **Alpha power** | Band power 8–12 Hz |
-| **Beta power** | Band power 13–30 Hz |
+| **Delta power** | Band power 1-4 Hz |
+| **Theta power** | Band power 4-8 Hz |
+| **Alpha power** | Band power 8-12 Hz |
+| **Beta power** | Band power 13-30 Hz |
 | **IWMF** | Intensity Weighted Mean Frequency |
 | **IWBW** | Intensity Weighted Bandwidth |
 | **SEF (95%)** | Spectral Edge Frequency at 95% cumulative power |
@@ -121,7 +121,7 @@ This yields **140 features per window** (14 channels × 10 features). Feature ex
 
 Four model families were evaluated on this dataset.
 
-### 1. Support Vector Machine — RBF Kernel (GPU-accelerated)
+### 1. Support Vector Machine - RBF Kernel (GPU-accelerated)
 
 Implemented with **RAPIDS cuML** for GPU-accelerated training on standardised features.
 
@@ -134,7 +134,7 @@ $$f(x) = \sum_{i=1}^{N} \alpha_i y_i K(x_i, x) + b, \quad K(x_i, x) = e^{-\gamma
 
 ---
 
-### 2. Support Vector Machine — Linear Kernel (GPU-accelerated)
+### 2. Support Vector Machine - Linear Kernel (GPU-accelerated)
 
 Same setup as above, with a linear kernel:
 
